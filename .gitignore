@@ -1,2 +1,5 @@
 *.png
+*.jpg
 .DS_Store
+*.crx
+*.pem

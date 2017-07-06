@@ -4,7 +4,7 @@
 
 ## 安装方法：
 
-1. 通过Chrome Webstore（此处有超链接）安装。
+1. 通过Chrome Webstore安装[DingTalk Interceptor](https://chrome.google.com/webstore/detail/dingtalk-interceptor/dcefpnhobgebmafmamokafniilmmcgdp)。
 2. 若无法访问Chrome Webstore，可下载此项目解压，然后打开`chrome://extensions/`，点击`加载已解压的扩展程序...`按钮，选择此项目文件夹。
 
 ## 使用方法：
