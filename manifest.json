@@ -1,0 +1,29 @@
+{
+    "name": "DingTalk Interceptor",
+    "description": "Intercept DingTalk sending read receipts/拦截钉钉消息已读回执",
+    "manifest_version": 2,
+    "short_name": "ding_interceptor",
+    "version": "0.0.1",
+    "author": "lxiange",
+    "permissions": [
+        "http://im.dingtalk.com/*",
+        "https://im.dingtalk.com/*",
+        "storage"
+    ],
+    "content_security_policy": "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; connect-src *",
+    "browser_action": {
+        "default_title": "DingTalk Interceptor"
+    },
+    "content_scripts": [
+        {
+            "js": [
+                "ding_interceptor.js"
+            ],
+            "matches": [
+                "http://im.dingtalk.com/*",
+                "https://im.dingtalk.com/*"
+            ],
+            "run_at": "document_start"
+        }
+    ]
+}
