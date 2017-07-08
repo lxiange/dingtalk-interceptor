@@ -25,7 +25,18 @@ Using wsHook. All WebSocket connections are being hooked.
 
 此插件会拦截网页版钉钉的所有已读回执，如需发送已读回执，请在手机等其他客户端上再次浏览消息即可。
 
+## 注意事项：
+
+本插件采用简单匹配法，拦截所有发送的包含`updateToRead`的消息。
+因此如果你发送的消息中含有此字符串，也将被误伤拦截。
+这是我特意留的一个Bug，:P
 
 ## 致谢
+
+* 感谢 @启鸣 不停给我发消息做测试。答应了算他一份的，差点忘了。
 * [skepticfx/hookish](https://github.com/skepticfx/hookish)
 （其实基本上就是照着抄的）
+
+## 相关博文
+
+[钉钉已读回执拦截器](https://lxiange.com/posts/dingtalk-interceptor.html)
