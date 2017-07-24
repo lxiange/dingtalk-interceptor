@@ -33,7 +33,11 @@ var wshook = function () {
             WSObject.send = function (data) {
                 data = wsHook.before(data, WSObject.url) || data;
                 if (data.indexOf('updateToRead') != -1) {
-                    console.log('receipt is intercepted: ', data)
+                    console.log('`updateToRead` is intercepted: ', data)
+                    return;
+                }
+                if (data.indexOf('confirmDing') != -1) {
+                    console.log('`confirmDing` is intercepted: ', data)
                     return;
                 }
                 _send.apply(this, arguments);
