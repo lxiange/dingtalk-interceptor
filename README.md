@@ -2,6 +2,12 @@
 
 **适用于网页版钉钉**
 
+## 功能
+
+* 拦截普通消息已读回执
+* 拦截“钉一下”回执
+* 消息防撤回
+
 ## 安装方法：
 
 1. 通过Chrome Webstore安装[DingTalk Interceptor](https://chrome.google.com/webstore/detail/dingtalk-interceptor/dcefpnhobgebmafmamokafniilmmcgdp)

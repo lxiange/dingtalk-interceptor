@@ -1,3 +1,4 @@
+
 var wshook = function () {
     console.log('Using wsHook. All WebSocket connections are being hooked.');
     /* wsHook.js
@@ -12,8 +13,13 @@ var wshook = function () {
             // ...
             return data;
         };
+        var after = wsHook.after = function (e, url) {
+            // ...
+            return e;
+        };
         wsHook.resetHooks = function () {
             wsHook.before = before;
+            wsHook.after = after;
         }
 
         var _WS = WebSocket;
@@ -42,6 +48,41 @@ var wshook = function () {
                 }
                 _send.apply(this, arguments);
             }
+
+            // Events needs to be proxied and bubbled down.
+            var onmessage_func;
+            WSObject.__defineSetter__('onmessage', function (func) {
+                onmessage_func = func;
+            });
+            var base64ToBase16 = function (base64) {
+                return window.atob(base64)
+                    .split('')
+                    .map(function (aChar) {
+                        return ('0' + aChar.charCodeAt(0).toString(16)).slice(-2);
+                    })
+                    .join('')
+            }
+            WSObject.addEventListener('message', function (e) {
+                try {
+                    var content = JSON.parse(e.data);
+                    if (content['lwp'] === '/s/sync'
+                        && content['body'].hasOwnProperty('1')
+                        && content['body']['1']['6'].length > 0
+                        && content['body']['1']['6'][0]['1'] === 1001) {
+                        console.log("Message recall is intercepted.", e.data);
+                        msg_id = parseInt(base64ToBase16(content['body']['1']['6'][0]['2']).substr(54, 10), 16);
+
+                        var msg_element = document.querySelector('[msg-id="' + msg_id + '"]');
+                        var msg_bubble = msg_element.getElementsByClassName('msg-bubble ng-scope ng-isolate-scope')[0];
+                        msg_bubble.style.border = msg_bubble.style.background = 'red';
+                        msg_element.parentElement.appendChild(msg_element.cloneNode(true));
+                    }
+                } catch (error) {
+                    console.log(e.data);
+                    console.error(error);
+                }
+                onmessage_func.apply(this, [e]);
+            });
             return WSObject;
         }
     })();
