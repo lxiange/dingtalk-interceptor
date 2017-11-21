@@ -22,6 +22,23 @@ var wshook = function () {
             wsHook.after = after;
         }
 
+
+        var enableInterception = true;
+        setTimeout(() => {
+            console.log('addEventListener on header.');
+            document.getElementById('header').addEventListener('click',
+                () => {
+                    if (enableInterception) {
+                        enableInterception = false;
+                        document.getElementById('header').style.backgroundColor = 'green';
+                    } else {
+                        enableInterception = true;
+                        document.getElementById('header').style.backgroundColor = '#008cee';
+                    }
+                });
+        }, 5000);
+
+
         var _WS = WebSocket;
         WebSocket = function (url, protocols) {
             var WSObject;
@@ -38,13 +55,14 @@ var wshook = function () {
             var _wsobject = this;
             WSObject.send = function (data) {
                 data = wsHook.before(data, WSObject.url) || data;
-                if (data.indexOf('updateToRead') != -1) {
-                    console.log('`updateToRead` is intercepted: ', data)
-                    return;
-                }
-                if (data.indexOf('confirmDing') != -1) {
-                    console.log('`confirmDing` is intercepted: ', data)
-                    return;
+
+                if (data.indexOf('updateToRead') != -1 || data.indexOf('confirmDing') != -1) {
+                    if (enableInterception) {
+                        console.log('`updateToRead` is intercepted: ', data)
+                        return;
+                    } else {
+                        console.log('enableInterception is false, not intercept: ', data);
+                    }
                 }
                 _send.apply(this, arguments);
             }
@@ -62,6 +80,7 @@ var wshook = function () {
                     })
                     .join('')
             }
+            //todo: refactor.
             WSObject.addEventListener('message', function (e) {
                 try {
                     var content = JSON.parse(e.data);
@@ -69,7 +88,9 @@ var wshook = function () {
                         && content['body'].hasOwnProperty('1')
                         && content['body']['1']['6'].length > 0
                         && content['body']['1']['6'][0]['1'] === 1001) {
+
                         console.log("Message recall is intercepted.", e.data);
+
                         msg_id = parseInt(base64ToBase16(content['body']['1']['6'][0]['2']).substr(54, 10), 16);
 
                         var msg_element = document.querySelector('[msg-id="' + msg_id + '"]');
@@ -88,34 +109,44 @@ var wshook = function () {
     })();
 }
 
-chrome.storage.local.get(null, function (db) {
-    if (document.domain.indexOf('im.dingtalk.com') != -1) {
-        console.log('Injecting DingTalk hooks.');
-        var injectString = [];
-        injectString.push(wshook)
-
-        // Generate the script to inject from the array of functions.
-        var scriptToInject = "";
-
-        injectString.forEach(function (func) {
-            var func = func.toString().trim(); // get the function code
-            func = func.replace(func.split('{', 1), ''); // remove the function(), part from the string.
-            func = func.substr(1); // remove the {
-            func = func.substr(0, func.length - 1); // remove the last } at the end.
-            func = func + "\n"; // create a new line
-            scriptToInject = scriptToInject + func;
-
-        });
-
-        injectScript(scriptToInject);
-
+function install_for_chrome() {
+    function injectScript(scriptString) {
+        var actualCode = '(function(){' + scriptString + '})();'
+        var script = document.createElement('script');
+        script.textContent = actualCode;
+        (document.head || document.documentElement).appendChild(script);
+        script.parentNode.removeChild(script);
     }
-});
 
-function injectScript(scriptString) {
-    var actualCode = '(function(){' + scriptString + '})();'
-    var script = document.createElement('script');
-    script.textContent = actualCode;
-    (document.head || document.documentElement).appendChild(script);
-    script.parentNode.removeChild(script);
+    chrome.storage.local.get(null, function (db) {
+        if (document.domain.indexOf('im.dingtalk.com') != -1) {
+            console.log('Injecting DingTalk hooks.');
+            var injectString = [];
+            injectString.push(wshook)
+
+            // Generate the script to inject from the array of functions.
+            var scriptToInject = "";
+
+            injectString.forEach(function (func) {
+                var func = func.toString().trim(); // get the function code
+                func = func.replace(func.split('{', 1), ''); // remove the function(), part from the string.
+                func = func.substr(1); // remove the {
+                func = func.substr(0, func.length - 1); // remove the last } at the end.
+                func = func + "\n"; // create a new line
+                scriptToInject = scriptToInject + func;
+
+            });
+
+            injectScript(scriptToInject);
+
+        }
+    });
+}
+
+if (typeof nw !== 'undefined') {
+    // in nwjs.
+    wshook();
+} else {
+    // in chrome.
+    install_for_chrome();
 }

@@ -3,7 +3,7 @@
     "description": "Intercept DingTalk sending read receipts/拦截钉钉消息已读回执",
     "manifest_version": 2,
     "short_name": "ding_interceptor",
-    "version": "0.0.3",
+    "version": "0.1.0",
     "author": "lxiange",
     "permissions": [
         "http://im.dingtalk.com/*",
