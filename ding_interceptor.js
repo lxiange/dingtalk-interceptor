@@ -22,22 +22,7 @@ var wshook = function () {
             wsHook.after = after;
         }
 
-
         var enableInterception = true;
-        setTimeout(() => {
-            console.log('addEventListener on header.');
-            document.getElementById('header').addEventListener('click',
-                () => {
-                    if (enableInterception) {
-                        enableInterception = false;
-                        document.getElementById('header').style.backgroundColor = 'green';
-                    } else {
-                        enableInterception = true;
-                        document.getElementById('header').style.backgroundColor = '#008cee';
-                    }
-                });
-        }, 5000);
-
 
         var _WS = WebSocket;
         WebSocket = function (url, protocols) {
@@ -63,6 +48,21 @@ var wshook = function () {
                     } else {
                         console.log('enableInterception is false, not intercept: ', data);
                     }
+                }
+                if (data.indexOf('"lwp":"/subscribe"') != -1) {
+                    setTimeout(() => {
+                        console.log('addEventListener on header.');
+                        document.getElementById('header').addEventListener('contextmenu',
+                            () => {
+                                if (enableInterception) {
+                                    enableInterception = false;
+                                    document.getElementById('header').style.backgroundColor = 'green';
+                                } else {
+                                    enableInterception = true;
+                                    document.getElementById('header').style.backgroundColor = '#008cee';
+                                }
+                            });
+                    }, 3000);
                 }
                 _send.apply(this, arguments);
             }
@@ -144,6 +144,7 @@ function install_for_chrome() {
 }
 
 if (typeof nw !== 'undefined') {
+    // alert('in nw');
     // in nwjs.
     wshook();
 } else {
