@@ -1,12 +1,49 @@
-# 钉钉已读回执拦截器
+# 钉钉已读状态拦截器
 
-**适用于网页版钉钉**
+<del>**适用于网页版钉钉**</del>
+
+## UPDATE
+
+经同事提醒，钉钉客户端（3.x）就是Electron包装的一层网页版而已。于是经过简单改造，现在已经支持钉钉客户端。
+
+mac用户（3.x版本）可以直接运行`sh install.sh`，自动安装并注入。
+
+Windows用户可以参考下，把js文件拷贝到钉钉目录（大概是叫`../app.nw/web_content`）下，并在`index.html`里加载此js。
+
+**注意，一定要放在`app.js`前**
+这样OK：
+
+```html
+<script src="./assets/ding_interceptor.js"></script>
+<script src="./assets/vendor.js"></script>
+<script src="./assets/app.js"></script>
+```
+
+这样不OK：
+
+```html
+<script src="./assets/vendor.js"></script>
+<script src="./assets/app.js"></script>
+<script src="./assets/ding_interceptor.js"></script>
+```
+
+默认会自动拦截全部已读回执。不过此次特增加了“原谅模式”，即恢复默认设置不再拦截，正常向对方展示已读状态。
+
+右击标题栏部分即可激活或关闭。
+
+![header](https://images.lxiange.com/posts/dingtalk-interceptor/header.png)
+
+可以看到，标题栏会变成原谅色。喜欢你们喜欢。
+
+不过值得庆祝的是，钉钉4.0版本已经重写为原生APP，性能和功能都得到很大的提升，可喜可贺！
+
+以下为旧内容：
 
 ## 功能
 
 * 拦截普通消息已读回执
 * 拦截“钉一下”回执
-* 消息防撤回
+* 消息防撤回（功能很鸡肋，只能拦截当前聊天窗口）
 
 ## 安装方法：
 
