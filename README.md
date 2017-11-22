@@ -4,11 +4,11 @@
 
 ## UPDATE
 
-经同事提醒，钉钉客户端（3.x）就是Electron包装的一层网页版而已。于是经过简单改造，现在已经支持钉钉客户端。
+经同事提醒，钉钉客户端（3.x）就是 Electron 包装的一层网页版而已。于是经过简单改造，现在已经支持钉钉客户端。
 
 Mac 用户（3.x 版本）可以直接运行`sh install.sh`，自动安装并注入。
 
-Windows 用户可以参考下，把 js 文件拷贝到钉钉目录（大概是叫`../app.nw/web_content`）下，并在`index.html`里加载此 js 。
+Windows 用户可以参考下，把 js 文件拷贝到钉钉目录（大概是叫`../current/web_content`）下，并在`index.html`里加载此 js 。
 
 **注意，一定要放在`app.js`前**
 
